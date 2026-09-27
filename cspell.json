@@ -1,0 +1,35 @@
+{
+  "version": "0.2",
+  "words": [
+    "AgentScope",
+    "AutoGen",
+    "CAMEL",
+    "DASHSCOPE",
+    "LangGraph",
+    "QWEN",
+    "Qwen",
+    "SerpApi",
+    "Streamlit",
+    "Tavily",
+    "agentchat",
+    "astream",
+    "basedpyright",
+    "checkpointer",
+    "cursorpyright",
+    "dashscope",
+    "deepseek",
+    "dotenv",
+    "elts",
+    "fanout",
+    "pycache",
+    "qwen",
+    "serp",
+    "serpapi",
+    "venv"
+  ],
+  "ignorePaths": [
+    ".venv",
+    "node_modules",
+    "**/__pycache__"
+  ]
+}

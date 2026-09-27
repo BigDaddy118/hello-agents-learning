@@ -1,0 +1,23 @@
+{
+  "include": [
+    "code/chapter4",
+    "code/chapter6/AutoGenDemo",
+    "_check_env.py"
+  ],
+  "exclude": [
+    "**/.venv",
+    "**/__pycache__",
+    "code/chapter6/AgentScopeDemo",
+    "code/chapter6/CAMEL",
+    "code/chapter6/Langgraph"
+  ],
+  "ignore": [
+    "code/chapter6/AgentScopeDemo",
+    "code/chapter6/CAMEL",
+    "code/chapter6/Langgraph"
+  ],
+  "venvPath": ".",
+  "venv": ".venv",
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "basic"
+}
