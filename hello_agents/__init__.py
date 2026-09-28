@@ -1,4 +1,4 @@
-"""HelloAgents 框架（第七章）。"""
+"""HelloAgents 框架（第七–八章）。"""
 
 from .agents import (
     PlanAndSolveAgent,
@@ -14,6 +14,8 @@ from .core.message import Message
 from .tools import (
     AsyncToolExecutor,
     CalculatorTool,
+    MemoryTool,
+    RAGTool,
     SearchTool,
     Tool,
     ToolChain,
@@ -25,7 +27,7 @@ from .tools import (
     search,
 )
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 __all__ = [
     "__version__",
     "Agent",
@@ -45,6 +47,8 @@ __all__ = [
     "AsyncToolExecutor",
     "CalculatorTool",
     "SearchTool",
+    "MemoryTool",
+    "RAGTool",
     "calculate",
     "search",
     "run_parallel_tools_sync",

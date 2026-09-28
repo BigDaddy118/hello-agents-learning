@@ -8,10 +8,11 @@
 
 | 路径 | 内容 |
 |------|------|
-| `hello_agents/` | 自建框架（第七章 7.1–7.5） |
+| `hello_agents/` | 自建框架（第七/八章：Agent、Memory、RAG） |
 | `code/chapter4/` | 手写 ReAct、Plan-and-Solve、Memory、Tools、LLM 客户端 |
 | `code/chapter6/` | AutoGen、AgentScope、CAMEL、LangGraph 练习 |
-| `code/chapter7/` | 框架自检脚本 `demo_74_75.py` |
+| `code/chapter7/` | 框架自检：`demo_74_75.py` |
+| `code/chapter8/` | 第八章 Memory/RAG 演示与问答助手 |
 
 ### `hello_agents` 结构
 
@@ -19,10 +20,11 @@
 hello_agents/
 ├── core/          # LLM、Message、Config、Agent 基类
 ├── agents/        # Simple / ReAct / Reflection / Plan-and-Solve
-└── tools/         # 注册表、计算器、搜索、工具链、异步执行
+├── memory/        # 四种记忆 + RAG 管道（本地 TF-IDF 可跑通）
+└── tools/         # 注册表、计算器、搜索、MemoryTool、RAGTool …
 ```
 
-设计上只有 Agent 是一等公民，记忆、检索等后续能力都挂在工具上。模型调用走 OpenAI 兼容接口，按环境变量自动识别提供商（DeepSeek、OpenAI、Ollama、vLLM 等）。
+设计上只有 Agent 是一等公民，记忆与 RAG 挂在工具上。模型调用走 OpenAI 兼容接口，按环境变量自动识别提供商（DeepSeek、OpenAI、Ollama、vLLM 等）。Qdrant / Neo4j / MarkItDown / 真实 Embedding 为可选项。
 
 ## 环境
 
@@ -34,26 +36,19 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e .
 ```
 
-搜索工具额外依赖：
+可选依赖：
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip install -e ".[search]"
+.\.venv\Scripts\python.exe -m pip install -e ".[search]"   # 搜索
+.\.venv\Scripts\python.exe -m pip install -e ".[web]"      # Gradio 问答助手
+.\.venv\Scripts\python.exe -m pip install -e ".[memory]"   # Qdrant/Neo4j 等
 ```
 
 第四章、第六章的第三方框架不在本包依赖里，各自目录下有 `requirements.txt` 的按那个装。
 
 ### 配置
 
-复制下面内容到项目根目录的 `.env`（该文件已忽略，不会进仓库）：
-
-```env
-LLM_API_KEY=your-key
-LLM_MODEL_ID=deepseek-chat
-LLM_BASE_URL=https://api.deepseek.com
-# 可选
-SERPAPI_API_KEY=
-TAVILY_API_KEY=
-```
+复制根目录 [`.env.example`](.env.example) 为 `.env`（已 gitignore）。第七章只需 LLM 段；第八章可选填 Qdrant / Neo4j / Embedding（不填则用本地 TF-IDF + JSON）。
 
 自检环境变量和已装包：
 
@@ -69,6 +64,22 @@ TAVILY_API_KEY=
 
 ```powershell
 .\.venv\Scripts\python.exe code\chapter7\demo_74_75.py
+```
+
+第八章（本地 TF-IDF，无需云端向量库）：
+
+```powershell
+$env:EMBED_MODEL_TYPE='tfidf'
+.\.venv\Scripts\python.exe code\chapter8\demo_823_memory_ops.py
+.\.venv\Scripts\python.exe code\chapter8\demo_825_memory_types.py
+.\.venv\Scripts\python.exe code\chapter8\demo_833_rag.py
+.\.venv\Scripts\python.exe code\chapter8\demo_84_full.py
+```
+
+Gradio 文档问答助手（需先 `pip install gradio`）：
+
+```powershell
+.\.venv\Scripts\python.exe code\chapter8\qa_assistant_app.py
 ```
 
 最小对话：
@@ -102,5 +113,5 @@ print(agent.run("用两个字回答：天空通常是什么颜色？"))
 
 ## 说明
 
-- `.env`、虚拟环境、编辑器本地配置不会提交。
+- `.env`、虚拟环境、`memory_data/`、`knowledge_base/`、编辑器本地配置不会提交。
 - 第七章的 `FunctionCallAgent`（教程里 0.2.8 之后的内容）还没做。

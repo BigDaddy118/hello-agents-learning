@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hello-agents"
-version = "0.1.1"
-description = "HelloAgents — Datawhale 第七章自建智能体框架（学习实现）"
+version = "0.2.0"
+description = "HelloAgents — Datawhale 第七/八章自建智能体框架（学习实现）"
 requires-python = ">=3.10"
 dependencies = [
     "openai>=1.0.0,<2.0.0",
@@ -15,6 +15,17 @@ dependencies = [
 
 [project.optional-dependencies]
 search = ["tavily-python", "google-search-results"]
+# 第八章完整依赖（实现 8.2/8.3 时再装）
+memory = [
+    "qdrant-client",
+    "neo4j",
+    "spacy",
+    "sentence-transformers",
+    "markitdown",
+    "pypdf",
+]
+web = ["gradio>=4.0.0"]
+all = ["hello-agents[search,memory,web]"]
 
 [tool.setuptools.packages.find]
 where = ["."]

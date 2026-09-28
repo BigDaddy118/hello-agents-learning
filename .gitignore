@@ -5,3 +5,5 @@ venv/
 .ruff_cache/
 *.egg-info/
 .vscode/
+memory_data/
+knowledge_base/
