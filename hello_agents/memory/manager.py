@@ -218,7 +218,8 @@ class MemoryManager:
         keep = {m.id for _, m in all_items[:cap]}
         removed = 0
         for s, m in all_items:
-            if m.id not in keep or m.importance < threshold:
+            # 只删容量外的；阈值已体现在排序保留上，勿再用 OR 误伤 keep 内低分项
+            if m.id not in keep:
                 if s.remove(m.id):
                     removed += 1
         return removed

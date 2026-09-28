@@ -113,13 +113,25 @@ class LocalRAGPipeline:
         if not text or not text.strip():
             raise ValueError("text 不能为空")
         doc_id = document_id or f"doc_{uuid.uuid4().hex[:8]}"
-        self._docs = {
-            k: v for k, v in self._docs.items() if v.get("document_id") != doc_id
-        }
         chunks = text_to_chunks(
             text, chunk_tokens=chunk_size, overlap_tokens=chunk_overlap
         )
-        created = self.index_chunks(chunks, doc_id)
+        if not chunks:
+            raise ValueError("分块结果为空，未修改知识库")
+        # 先备份；成功入库后再替换，避免 index 半路失败丢旧文档
+        previous = dict(self._docs)
+        try:
+            self._docs = {
+                k: v for k, v in previous.items() if v.get("document_id") != doc_id
+            }
+            created = self.index_chunks(chunks, doc_id)
+        except Exception:
+            self._docs = previous
+            try:
+                self._save()
+            except Exception:
+                pass
+            raise
         return {
             "success": True,
             "document_id": doc_id,
