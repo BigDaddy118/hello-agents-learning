@@ -96,6 +96,7 @@ class SearchTool(Tool):
 
     def _search_serpapi(self, query: str) -> str:
         results: dict[str, Any]
+        api_key = self.serpapi_key or ""
         try:
             from serpapi import SerpApiClient
 
@@ -103,7 +104,7 @@ class SearchTool(Tool):
                 {
                     "engine": "google",
                     "q": query,
-                    "api_key": self.serpapi_key,
+                    "api_key": api_key,
                     "gl": "cn",
                     "hl": "zh-cn",
                 }
@@ -112,9 +113,10 @@ class SearchTool(Tool):
         except Exception:
             import serpapi
 
-            search = serpapi.GoogleSearch(
-                {"q": query, "api_key": self.serpapi_key, "num": 3}
-            )
+            google_search = getattr(serpapi, "GoogleSearch", None)
+            if google_search is None:
+                return "❌ SerpApi 不可用"
+            search = google_search({"q": query, "api_key": api_key, "num": 3})
             results = search.get_dict()
 
         text = "🔍 SerpApi Google搜索结果：\n\n"

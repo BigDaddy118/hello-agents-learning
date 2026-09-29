@@ -23,11 +23,15 @@ class Config(BaseModel):
 
     @classmethod
     def from_env(cls) -> Config:
+        max_tokens: int | None = None
+        raw_max = os.getenv("MAX_TOKENS")
+        if raw_max:
+            max_tokens = int(raw_max)
         return cls(
             debug=os.getenv("DEBUG", "false").lower() == "true",
             log_level=os.getenv("LOG_LEVEL", "INFO"),
             temperature=float(os.getenv("TEMPERATURE", "0.7")),
-            max_tokens=int(os.getenv("MAX_TOKENS")) if os.getenv("MAX_TOKENS") else None,
+            max_tokens=max_tokens,
         )
 
     def to_dict(self) -> dict[str, Any]:

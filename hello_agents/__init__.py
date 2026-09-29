@@ -1,11 +1,13 @@
-"""HelloAgents 框架（第七–八章）。"""
+"""HelloAgents 框架（第七–九章）。"""
 
 from .agents import (
+    CodebaseMaintainer,
     PlanAndSolveAgent,
     ReActAgent,
     ReflectionAgent,
     SimpleAgent,
 )
+from .context import ContextBuilder, ContextConfig, ContextPacket
 from .core.agent import Agent
 from .core.config import Config
 from .core.exceptions import HelloAgentsException
@@ -26,30 +28,38 @@ from .tools import (
     run_parallel_tools_sync,
     search,
 )
+from .tools.builtin.note_tool import NoteTool as NoteTool
+from .tools.builtin.terminal_tool import TerminalTool as TerminalTool
 
 __version__ = "0.2.0"
 __all__ = [
-    "__version__",
     "Agent",
-    "Config",
-    "HelloAgentsLLM",
-    "HelloAgentsException",
-    "Message",
-    "SimpleAgent",
-    "ReActAgent",
-    "ReflectionAgent",
-    "PlanAndSolveAgent",
-    "Tool",
-    "ToolRegistry",
-    "global_registry",
-    "ToolChain",
-    "ToolChainManager",
     "AsyncToolExecutor",
     "CalculatorTool",
-    "SearchTool",
+    "CodebaseMaintainer",
+    "Config",
+    "ContextBuilder",
+    "ContextConfig",
+    "ContextPacket",
+    "HelloAgentsException",
+    "HelloAgentsLLM",
     "MemoryTool",
+    "Message",
+    "NoteTool",
+    "PlanAndSolveAgent",
     "RAGTool",
+    "ReActAgent",
+    "ReflectionAgent",
+    "SearchTool",
+    "SimpleAgent",
+    "TerminalTool",
+    "Tool",
+    "ToolChain",
+    "ToolChainManager",
+    "ToolRegistry",
+    "__version__",
     "calculate",
-    "search",
+    "global_registry",
     "run_parallel_tools_sync",
+    "search",
 ]

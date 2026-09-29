@@ -14,8 +14,8 @@ class QdrantVectorStore:
         collection_name: str,
         dimension: int = 384,
     ):
-        from qdrant_client import QdrantClient
-        from qdrant_client.http import models as qm
+        from qdrant_client import QdrantClient  # type: ignore[import-not-found]
+        from qdrant_client.http import models as qm  # type: ignore[import-not-found]
 
         self.collection_name = collection_name
         self.dimension = dimension
@@ -46,7 +46,7 @@ class QdrantVectorStore:
         )
 
     def upsert(self, points: list[dict[str, Any]]) -> None:
-        from qdrant_client.http import models as qm
+        from qdrant_client.http import models as qm  # type: ignore[import-not-found]
 
         self.client.upsert(
             collection_name=self.collection_name,

@@ -141,7 +141,7 @@ def _get_markitdown_instance() -> Any:
         return _markitdown
     _markitdown_tried = True
     try:
-        from markitdown import MarkItDown
+        from markitdown import MarkItDown  # type: ignore[import-not-found]
 
         _markitdown = MarkItDown()
     except Exception:
@@ -162,7 +162,7 @@ def _fallback_text_reader(path: str) -> str:
 def _enhanced_pdf_processing(path: str) -> str:
     """ponytail: 优先 pypdf；无则走 MarkItDown / 空。"""
     try:
-        from pypdf import PdfReader
+        from pypdf import PdfReader  # type: ignore[import-not-found]
 
         reader = PdfReader(path)
         parts = [(page.extract_text() or "") for page in reader.pages]

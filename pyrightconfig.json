@@ -1,7 +1,10 @@
 {
   "include": [
+    "hello_agents",
     "code/chapter4",
     "code/chapter6/AutoGenDemo",
+    "code/chapter8",
+    "code/chapter9",
     "_check_env.py"
   ],
   "exclude": [
@@ -19,5 +22,6 @@
   "venvPath": ".",
   "venv": ".venv",
   "pythonVersion": "3.12",
-  "typeCheckingMode": "basic"
+  "typeCheckingMode": "basic",
+  "extraPaths": ["."]
 }

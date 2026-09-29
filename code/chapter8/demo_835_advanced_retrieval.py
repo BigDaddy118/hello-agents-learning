@@ -63,7 +63,8 @@ def main() -> None:
     print("=== MQE 扩展 ===")
     print(prompt_mqe(q, 3, llm=_StubLLM()))
     print("\n=== HyDE 假设文档 ===")
-    print(prompt_hyde(q, llm=_StubLLM())[:80], "...")
+    hyde = prompt_hyde(q, llm=_StubLLM()) or ""
+    print(hyde[:80], "...")
 
     print("\n=== 基础检索 ===")
     print(rag.execute("search", query=q, limit=3, min_score=0.05))

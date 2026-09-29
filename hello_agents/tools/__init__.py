@@ -10,22 +10,26 @@ from .builtin import (
     calculate,
     search,
 )
+from .builtin.note_tool import NoteTool as NoteTool
+from .builtin.terminal_tool import TerminalTool as TerminalTool
 from .chain import ToolChain, ToolChainManager
 from .registry import ToolRegistry, global_registry
 
 __all__ = [
+    "AsyncToolExecutor",
+    "CalculatorTool",
+    "MemoryTool",
+    "NoteTool",
+    "RAGTool",
+    "SearchTool",
+    "TerminalTool",
     "Tool",
-    "ToolParameter",
-    "ToolRegistry",
-    "global_registry",
     "ToolChain",
     "ToolChainManager",
-    "AsyncToolExecutor",
-    "run_parallel_tools_sync",
-    "CalculatorTool",
-    "SearchTool",
-    "MemoryTool",
-    "RAGTool",
+    "ToolParameter",
+    "ToolRegistry",
     "calculate",
+    "global_registry",
+    "run_parallel_tools_sync",
     "search",
 ]

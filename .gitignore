@@ -7,3 +7,5 @@ venv/
 .vscode/
 memory_data/
 knowledge_base/
+*_notes/
+maintainer_report_*.json

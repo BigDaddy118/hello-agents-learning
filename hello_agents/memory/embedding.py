@@ -64,7 +64,7 @@ class DashScopeEmbedder:
 
 class SentenceTransformerEmbedder:
     def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
-        from sentence_transformers import SentenceTransformer
+        from sentence_transformers import SentenceTransformer  # type: ignore[import-not-found]
 
         self.name = "sentence-transformers"
         self._model = SentenceTransformer(model_name)
