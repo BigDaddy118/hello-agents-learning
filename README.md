@@ -7,6 +7,8 @@
 - [第七章 构建你的 Agent 框架](https://hello-agents.datawhale.cc/#/./chapter7/%E7%AC%AC%E4%B8%83%E7%AB%A0%20%E6%9E%84%E5%BB%BA%E4%BD%A0%E7%9A%84Agent%E6%A1%86%E6%9E%B6)
 - [第八章 记忆与检索](https://hello-agents.datawhale.cc/#/./chapter8/%E7%AC%AC%E5%85%AB%E7%AB%A0%20%E8%AE%B0%E5%BF%86%E4%B8%8E%E6%A3%80%E7%B4%A2)
 - [第九章 上下文工程](https://hello-agents.datawhale.cc/#/./chapter9/%E7%AC%AC%E4%B9%9D%E7%AB%A0%20%E4%B8%8A%E4%B8%8B%E6%96%87%E5%B7%A5%E7%A8%8B)
+- [第十章 协议与互操作](https://hello-agents.datawhale.cc/#/./chapter10)
+- [第十一章 Agentic RL](https://hello-agents.datawhale.cc/#/./chapter11)
 
 ## 目录
 
@@ -18,6 +20,8 @@
 | `code/chapter7/` | 框架自检：`demo_74_75.py` |
 | `code/chapter8/` | 第八章 Memory/RAG 演示与问答助手 |
 | `code/chapter9/` | 第九章 ContextBuilder / NoteTool / TerminalTool / 维护助手演示 |
+| `code/chapter10/` | 第十章 MCP 自检 + 自定义天气服务器（`14_weather_*`） |
+| `code/chapter11/` | 第十一章 SFT/GRPO 训练与评估流水线 |
 | `my_app/` | 给 `CodebaseMaintainer` 用的迷你示例代码库 |
 
 ### `hello_agents` 结构
@@ -28,7 +32,9 @@ hello_agents/
 ├── agents/        # Simple / ReAct / Reflection / Plan-and-Solve / CodebaseMaintainer
 ├── context/       # ContextBuilder（GSSC 流水线）
 ├── memory/        # 四种记忆 + RAG 管道（本地 TF-IDF 可跑通）
-└── tools/         # 注册表、计算器、搜索、Memory / RAG / Note / Terminal …
+├── protocols/     # 第十章 MCP 客户端/服务器
+├── rl/            # 第十一章 SFT/GRPO 训练封装
+└── tools/         # 注册表、计算器、搜索、Memory / RAG / Note / Terminal / MCP / RL …
 ```
 
 设计上只有 Agent 是一等公民，记忆、RAG、笔记与终端挂在工具上。模型调用走 OpenAI 兼容接口，按环境变量自动识别提供商（DeepSeek、OpenAI、Ollama、vLLM 等）。Qdrant / Neo4j / MarkItDown / 真实 Embedding 为可选项。
@@ -49,6 +55,8 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e ".[search]"   # 搜索
 .\.venv\Scripts\python.exe -m pip install -e ".[web]"      # Gradio 问答助手
 .\.venv\Scripts\python.exe -m pip install -e ".[memory]"   # Qdrant/Neo4j 等
+.\.venv\Scripts\python.exe -m pip install -e ".[protocols]" # 第十章 MCP
+.\.venv\Scripts\python.exe -m pip install -e ".[rl]"        # 第十一章 Agentic RL
 ```
 
 第四章、第六章的第三方框架不在本包依赖里，各自目录下有 `requirements.txt` 的按那个装。
@@ -104,6 +112,29 @@ Gradio 文档问答助手（需先 `pip install gradio`）：
 .\.venv\Scripts\python.exe code\chapter9\run_96_explore.py
 ```
 
+第十章 MCP（需 `pip install -e ".[protocols]"`）：
+
+```powershell
+$env:PYTHONIOENCODING='utf-8'
+.\.venv\Scripts\python.exe code\chapter10\demo_102_mcp.py
+# 10.5 自定义天气 MCP 服务器
+.\.venv\Scripts\python.exe code\chapter10\14_test_weather_server.py
+# 可选：接 LLM（需 .env）
+.\.venv\Scripts\python.exe code\chapter10\14_weather_agent.py demo
+```
+
+第十一章 Agentic RL（需 `pip install -e ".[rl]"`，建议用已装 torch/trl 的解释器；产出写入 `models/`，已 gitignore）：
+
+```powershell
+$env:PYTHONIOENCODING='utf-8'
+# 小参数端到端：数据 → SFT → 评估 → GRPO → 评估
+C:\Python314\python.exe code\chapter11\06_complete_pipeline.py
+# 分节练习
+C:\Python314\python.exe code\chapter11\04_sft_training.py
+C:\Python314\python.exe code\chapter11\05_grpo_training.py
+C:\Python314\python.exe code\chapter11\07_model_evaluation.py --max-samples 4 --skip-base
+```
+
 或：
 
 ```python
@@ -146,5 +177,5 @@ print(agent.run("用两个字回答：天空通常是什么颜色？"))
 
 ## 说明
 
-- `.env`、虚拟环境、`memory_data/`、`knowledge_base/`、`*_notes/`、编辑器本地配置不会提交。
+- `.env`、虚拟环境、`memory_data/`、`knowledge_base/`、`*_notes/`、`models/`、训练日志、编辑器本地配置不会提交。
 - 第七章的 `FunctionCallAgent`（教程里 0.2.8 之后的内容）还没做；第九章 `CodebaseMaintainer` 走「模式预处理 + ContextBuilder」路线。

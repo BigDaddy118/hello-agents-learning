@@ -25,7 +25,21 @@ memory = [
     "pypdf",
 ]
 web = ["gradio>=4.0.0"]
-all = ["hello-agents[search,memory,web]"]
+# 第十章 MCP（FastMCP 2.x）
+protocols = ["fastmcp>=2.0.0"]
+# 第十一章 Agentic RL
+rl = [
+    "trl>=0.24.0",
+    "transformers>=4.20.0",
+    "torch>=2.0.0",
+    "datasets>=2.14.0",
+    "accelerate>=0.20.0",
+    "peft>=0.5.0",
+    "bitsandbytes>=0.41.0",
+    "wandb>=0.15.0",
+    "tensorboard>=2.13.0",
+]
+all = ["hello-agents[search,memory,web,protocols,rl]"]
 
 [tool.setuptools.packages.find]
 where = ["."]

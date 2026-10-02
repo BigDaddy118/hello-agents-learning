@@ -1,0 +1,37 @@
+{
+  "model": {
+    "base_model": "Qwen/Qwen3-0.6B"
+  },
+  "data": {
+    "max_samples": 8
+  },
+  "sft": {
+    "output_dir": "./models/pipeline_sft",
+    "num_epochs": 1,
+    "batch_size": 2,
+    "learning_rate": 5e-5,
+    "lora_rank": 8,
+    "lora_alpha": 16
+  },
+  "grpo": {
+    "output_dir": "./models/pipeline_grpo",
+    "num_epochs": 1,
+    "batch_size": 2,
+    "learning_rate": 1e-5,
+    "num_generations": 2,
+    "max_new_tokens": 64,
+    "kl_coef": 0.05,
+    "lora_rank": 8,
+    "lora_alpha": 16
+  },
+  "eval": {
+    "max_samples": 4,
+    "max_new_tokens": 64,
+    "sft_accuracy_threshold": 0.0
+  },
+  "monitoring": {
+    "use_wandb": false,
+    "use_tensorboard": false,
+    "wandb_project": "agentic-rl-pipeline"
+  }
+}

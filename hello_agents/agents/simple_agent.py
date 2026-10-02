@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterator
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from ..core.agent import Agent
 from ..core.config import Config
@@ -20,9 +20,9 @@ class SimpleAgent(Agent):
         self,
         name: str,
         llm: HelloAgentsLLM,
-        system_prompt: Optional[str] = None,
-        config: Optional[Config] = None,
-        tool_registry: Optional[ToolRegistry] = None,
+        system_prompt: str | None = None,
+        config: Config | None = None,
+        tool_registry: ToolRegistry | None = None,
         enable_tool_calling: bool = True,
     ):
         super().__init__(name, llm, system_prompt, config)
@@ -128,20 +128,51 @@ class SimpleAgent(Agent):
                 else:
                     result = tool.run(self._parse_tool_parameters(tool_name, parameters))
             return f"🔧 工具 {tool_name} 执行结果:\n{result}"
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             return f"❌ 工具调用失败:{e}"
 
-    def _parse_tool_parameters(self, tool_name: str, parameters: str) -> dict[str, str]:
+    def _parse_tool_parameters(
+        self, tool_name: str, parameters: str
+    ) -> dict[str, Any]:
         if "=" in parameters:
-            out: dict[str, str] = {}
+            out: dict[str, Any] = {}
             for pair in parameters.split(","):
                 if "=" in pair:
                     k, v = pair.split("=", 1)
                     out[k.strip()] = v.strip()
-            return out
+            return self._convert_parameter_types(tool_name, out)
         if tool_name == "search":
             return {"input": parameters}
         return {"input": parameters}
+
+    def _convert_parameter_types(
+        self, tool_name: str, params: dict[str, Any]
+    ) -> dict[str, Any]:
+        if not self.tool_registry:
+            return params
+        tool = self.tool_registry.get_tool(tool_name)
+        if not tool:
+            return params
+        try:
+            type_map = {p.name: p.type for p in tool.get_parameters()}
+        except Exception:  # noqa: BLE001
+            return params
+        converted: dict[str, Any] = {}
+        for key, value in params.items():
+            ptype = type_map.get(key)
+            if ptype in ("number", "integer") and isinstance(value, str):
+                try:
+                    converted[key] = (
+                        float(value) if ptype == "number" else int(value)
+                    )
+                    continue
+                except ValueError:
+                    pass
+            if ptype == "boolean" and isinstance(value, str):
+                converted[key] = value.lower() in ("true", "1", "yes")
+                continue
+            converted[key] = value
+        return converted
 
     def stream_run(self, input_text: str, **kwargs: Any) -> Iterator[str]:
         messages: list[dict[str, str]] = []
@@ -163,6 +194,13 @@ class SimpleAgent(Agent):
 
             self.tool_registry = ToolRegistry()
             self.enable_tool_calling = True
+        # MCPTool auto_expand → 注册展开后的独立工具
+        if getattr(tool, "auto_expand", False):
+            expanded = tool.get_expanded_tools()
+            if expanded:
+                for t in expanded:
+                    self.tool_registry.register_tool(t)
+                return
         self.tool_registry.register_tool(tool)
 
     def has_tools(self) -> bool:

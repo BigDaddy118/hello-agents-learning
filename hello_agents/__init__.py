@@ -1,4 +1,4 @@
-"""HelloAgents 框架（第七–九章）。"""
+"""HelloAgents 框架（第七–十章）。"""
 
 from .agents import (
     CodebaseMaintainer,
@@ -29,6 +29,7 @@ from .tools import (
     search,
 )
 from .tools.builtin.note_tool import NoteTool as NoteTool
+from .tools.builtin.protocol_tools import MCPTool as MCPTool
 from .tools.builtin.terminal_tool import TerminalTool as TerminalTool
 
 __version__ = "0.2.0"
@@ -43,6 +44,7 @@ __all__ = [
     "ContextPacket",
     "HelloAgentsException",
     "HelloAgentsLLM",
+    "MCPTool",
     "MemoryTool",
     "Message",
     "NoteTool",
