@@ -14,3 +14,7 @@ models/
 output/
 *.log
 code/chapter11/training_results.json
+
+# nested repos under chapter demos
+code/chapter10/weather-mcp-server/.git/
+**/.git.bak/
