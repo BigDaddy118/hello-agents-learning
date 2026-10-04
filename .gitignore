@@ -14,6 +14,16 @@ models/
 output/
 *.log
 code/chapter11/training_results.json
+temp_gorilla/
+data/gaia/
+evaluation_results/
+evaluation_reports/
+result/
+score/
+code/chapter12/data_generation/evaluation_results/
+code/chapter12/data_generation/generated_data/checkpoint_*.json
+code/chapter12/data_generation/generated_data/aime_generated_2*.json
+code/chapter12/data_generation/generated_data/generation_report_*.md
 
 # nested repos under chapter demos
 code/chapter10/weather-mcp-server/.git/

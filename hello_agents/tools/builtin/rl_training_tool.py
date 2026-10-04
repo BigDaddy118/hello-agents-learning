@@ -3,9 +3,9 @@
 提供强化学习训练功能，包括SFT、GRPO、PPO等算法。
 """
 
-from typing import Dict, Any, List, Optional
 import json
 from pathlib import Path
+from typing import Any
 
 from ..base import Tool, ToolParameter
 
@@ -68,7 +68,7 @@ class RLTrainingTool(Tool):
         self.custom_reward_functions[name] = reward_fn
         print(f"✅ 已注册自定义奖励函数: {name}")
 
-    def run(self, parameters: Dict[str, Any]) -> str:
+    def run(self, parameters: dict[str, Any]) -> str:
         """
         执行RL相关操作
 
@@ -129,16 +129,16 @@ class RLTrainingTool(Tool):
                     "message": f"不支持的操作: {action}。支持的操作: train, load_dataset, create_reward, evaluate"
                 }
                 return json.dumps(result, ensure_ascii=False, indent=2)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 工具边界：任意失败都回 JSON
             import traceback
             error_result = {
                 "status": "error",
-                "message": f"操作失败: {str(e)}",
+                "message": f"操作失败: {e!s}",
                 "traceback": traceback.format_exc()
             }
             return json.dumps(error_result, ensure_ascii=False, indent=2)
 
-    def _handle_train(self, parameters: Dict[str, Any]) -> str:
+    def _handle_train(self, parameters: dict[str, Any]) -> str:
         """处理训练操作"""
         algorithm = parameters.get("algorithm", "sft").lower()
         model_name = parameters.get("model_name", "Qwen/Qwen2-0.5B-Instruct")
@@ -177,14 +177,14 @@ class RLTrainingTool(Tool):
         print(f"{'='*60}")
         print(f"📦 模型: {model_name}")
         if custom_dataset:
-            print(f"📊 数据集: 自定义数据集")
+            print("📊 数据集: 自定义数据集")
         else:
             print(f"📊 数据集: {dataset_name}")
         print(f"🔄 训练轮数: {num_epochs}")
         print(f"💾 输出目录: {output_dir}")
         print(f"🎯 算法: {algorithm.upper()}")
         if custom_reward:
-            print(f"🎁 奖励函数: 自定义奖励函数")
+            print("🎁 奖励函数: 自定义奖励函数")
 
         # 打印监控配置
         monitoring = []
@@ -247,9 +247,9 @@ class RLTrainingTool(Tool):
 
         return json.dumps(result, ensure_ascii=False, indent=2)
 
-    def _handle_load_dataset(self, parameters: Dict[str, Any]) -> str:
+    def _handle_load_dataset(self, parameters: dict[str, Any]) -> str:
         """处理数据集加载操作"""
-        from hello_agents.rl import create_sft_dataset, create_rl_dataset
+        from hello_agents.rl import create_rl_dataset, create_sft_dataset
 
         format_type = parameters.get("format", "sft").lower()
         split = parameters.get("split", "train")
@@ -275,18 +275,18 @@ class RLTrainingTool(Tool):
         }
         return json.dumps(result, ensure_ascii=False, indent=2)
 
-    def _handle_create_reward(self, parameters: Dict[str, Any]) -> str:
+    def _handle_create_reward(self, parameters: dict[str, Any]) -> str:
         """处理奖励函数创建操作"""
         from hello_agents.rl import (
             create_accuracy_reward,
             create_length_penalty_reward,
-            create_step_reward
+            create_step_reward,
         )
 
         reward_type = parameters.get("reward_type", "accuracy").lower()
 
         if reward_type == "accuracy":
-            reward_fn = create_accuracy_reward()
+            create_accuracy_reward()
             result = {
                 "status": "success",
                 "reward_type": "accuracy",
@@ -295,12 +295,10 @@ class RLTrainingTool(Tool):
         elif reward_type == "length_penalty":
             penalty_weight = parameters.get("penalty_weight", 0.001)
             max_length = parameters.get("max_length", 1024)
-            # 创建基础奖励函数
-            base_reward_fn = create_accuracy_reward()
-            reward_fn = create_length_penalty_reward(
-                base_reward_fn=base_reward_fn,
+            create_length_penalty_reward(
+                base_reward_fn=create_accuracy_reward(),
                 max_length=max_length,
-                penalty_weight=penalty_weight
+                penalty_weight=penalty_weight,
             )
             result = {
                 "status": "success",
@@ -311,11 +309,9 @@ class RLTrainingTool(Tool):
             }
         elif reward_type == "step":
             step_bonus = parameters.get("step_bonus", 0.1)
-            # 创建基础奖励函数
-            base_reward_fn = create_accuracy_reward()
-            reward_fn = create_step_reward(
-                base_reward_fn=base_reward_fn,
-                step_bonus=step_bonus
+            create_step_reward(
+                base_reward_fn=create_accuracy_reward(),
+                step_bonus=step_bonus,
             )
             result = {
                 "status": "success",
@@ -331,7 +327,7 @@ class RLTrainingTool(Tool):
                 {"type": "length_penalty", "weight": 0.5, "target_length": 200},
                 {"type": "step", "weight": 0.3, "step_bonus": 0.1},
             ]
-            reward_fn = create_combined_reward(components)
+            create_combined_reward(components)  # 校验配置可构造
             result = {
                 "status": "success",
                 "reward_type": "combined",
@@ -346,14 +342,12 @@ class RLTrainingTool(Tool):
 
         return json.dumps(result, ensure_ascii=False, indent=2)
 
-    def _handle_evaluate(self, parameters: Dict[str, Any]) -> str:
+    def _handle_evaluate(self, parameters: dict[str, Any]) -> str:
         """处理模型评估操作（11.5：多指标 + 可选错误明细）。"""
         try:
             from pathlib import Path
 
-            from hello_agents.rl import create_rl_dataset, create_accuracy_reward
-            from transformers import AutoModelForCausalLM, AutoTokenizer  # type: ignore[import-not-found]
-            import torch  # type: ignore[import-not-found]
+            from hello_agents.rl import create_accuracy_reward, create_rl_dataset
 
             model_path = parameters.get("model_path")
             max_samples = int(parameters.get("max_samples", 20))
@@ -387,9 +381,9 @@ class RLTrainingTool(Tool):
             print(f"📥 加载模型: {model_path}...")
             try:
                 model, tokenizer, device = self._load_eval_model(model_path)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 加载失败回 JSON
                 return json.dumps(
-                    {"status": "error", "message": f"模型加载失败: {str(e)}"},
+                    {"status": "error", "message": f"模型加载失败: {e!s}"},
                     ensure_ascii=False,
                     indent=2,
                 )
@@ -404,7 +398,7 @@ class RLTrainingTool(Tool):
 
             n = min(max_samples, len(dataset))
             reward_fn = create_accuracy_reward()
-            details: List[Dict[str, Any]] = []
+            details: list[dict[str, Any]] = []
             gen_k = k if "accuracy_at_k" in metrics else 1
 
             iterator = range(n)
@@ -460,7 +454,7 @@ class RLTrainingTool(Tool):
             avg_steps = sum(d["steps"] for d in details) / n if n else 0.0
             fmt_rate = sum(1 for d in details if d["format_ok"]) / n if n else 0.0
 
-            result: Dict[str, Any] = {
+            result: dict[str, Any] = {
                 "status": "success",
                 "model_path": model_path,
                 "num_samples": n,
@@ -502,13 +496,13 @@ class RLTrainingTool(Tool):
             print(f"\n✅ 评估完成! 准确率={accuracy:.2%} 样本={n}")
             return json.dumps(result, ensure_ascii=False, indent=2)
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 评估失败回 JSON
             import traceback
 
             return json.dumps(
                 {
                     "status": "error",
-                    "message": f"评估失败: {str(e)}",
+                    "message": f"评估失败: {e!s}",
                     "traceback": traceback.format_exc(),
                 },
                 ensure_ascii=False,
@@ -517,10 +511,12 @@ class RLTrainingTool(Tool):
 
     def _load_eval_model(self, model_path: str):
         """评估用模型加载（支持 LoRA 目录）。"""
-        from pathlib import Path
 
-        from transformers import AutoModelForCausalLM, AutoTokenizer  # type: ignore[import-not-found]
         import torch  # type: ignore[import-not-found]
+        from transformers import (  # type: ignore[import-not-found]
+            AutoModelForCausalLM,
+            AutoTokenizer,
+        )
 
         device = "cuda" if torch.cuda.is_available() else "cpu"
         adapter = Path(model_path)
@@ -536,7 +532,7 @@ class RLTrainingTool(Tool):
                 base_id, trust_remote_code=True, torch_dtype=torch.float32
             )
             model = PeftModel.from_pretrained(base, model_path)
-            model = model.to(device)
+            model = model.to(device)  # type: ignore[arg-type]
             model.eval()
             return model, tokenizer, device
 
@@ -546,7 +542,7 @@ class RLTrainingTool(Tool):
         model = AutoModelForCausalLM.from_pretrained(
             model_path, trust_remote_code=True, torch_dtype=torch.float32
         )
-        model = model.to(device)
+        model = model.to(device)  # type: ignore[arg-type]
         model.eval()
         return model, tokenizer, device
 
@@ -571,7 +567,7 @@ class RLTrainingTool(Tool):
         self,
         model_name: str,
         dataset_name: str,
-        max_samples: Optional[int],
+        max_samples: int | None,
         num_epochs: int,
         output_dir: str,
         use_lora: bool,
@@ -582,14 +578,14 @@ class RLTrainingTool(Tool):
         custom_dataset = None,
         use_wandb: bool = False,
         use_tensorboard: bool = True,
-        wandb_project: Optional[str] = None
-    ) -> Dict[str, Any]:
+        wandb_project: str | None = None
+    ) -> dict[str, Any]:
         """执行SFT训练"""
         from hello_agents.rl import (
             SFTTrainerWrapper,
             TrainingConfig,
             create_sft_dataset,
-            setup_training_environment
+            setup_training_environment,
         )
 
         # 创建配置
@@ -645,7 +641,7 @@ class RLTrainingTool(Tool):
         self,
         model_name: str,
         dataset_name: str,
-        max_samples: Optional[int],
+        max_samples: int | None,
         num_epochs: int,
         output_dir: str,
         use_lora: bool,
@@ -659,23 +655,23 @@ class RLTrainingTool(Tool):
         kl_coef: float = 0.05,
         clip_range: float = 0.2,
         reward_type: str = "accuracy",
-        reward_config: Optional[Dict[str, Any]] = None,
+        reward_config: dict[str, Any] | None = None,
         custom_dataset = None,
         custom_reward = None,
         use_wandb: bool = False,
         use_tensorboard: bool = True,
-        wandb_project: Optional[str] = None
-    ) -> Dict[str, Any]:
+        wandb_project: str | None = None
+    ) -> dict[str, Any]:
         """执行GRPO训练"""
         from hello_agents.rl import (
             GRPOTrainerWrapper,
             TrainingConfig,
-            create_rl_dataset,
             create_accuracy_reward,
-            create_length_penalty_reward,
-            create_step_reward,
             create_combined_reward,
-            setup_training_environment
+            create_length_penalty_reward,
+            create_rl_dataset,
+            create_step_reward,
+            setup_training_environment,
         )
 
         # 创建配置
@@ -717,7 +713,7 @@ class RLTrainingTool(Tool):
         # 创建奖励函数
         if custom_reward is not None:
             reward_fn = custom_reward
-            print(f"✅ 使用自定义奖励函数")
+            print("✅ 使用自定义奖励函数")
         elif dataset_name in self.custom_reward_functions:
             reward_fn = self.custom_reward_functions[dataset_name]
             print(f"✅ 使用注册的奖励函数 '{dataset_name}'")
@@ -757,7 +753,7 @@ class RLTrainingTool(Tool):
     def _build_reward_fn(
         self,
         reward_type: str,
-        reward_config: Optional[Dict[str, Any]],
+        reward_config: dict[str, Any] | None,
         create_accuracy_reward,
         create_length_penalty_reward,
         create_step_reward,
@@ -791,7 +787,7 @@ class RLTrainingTool(Tool):
             "支持: accuracy, length_penalty, step, combined"
         )
     
-    def get_parameters(self) -> List[ToolParameter]:
+    def get_parameters(self) -> list[ToolParameter]:
         """获取工具参数定义"""
         return [
             ToolParameter(
@@ -884,7 +880,7 @@ class RLTrainingTool(Tool):
 # 便捷函数
 def train_with_sft(
     model_name: str = "Qwen/Qwen2-0.5B-Instruct",
-    max_samples: Optional[int] = 100,
+    max_samples: int | None = 100,
     num_epochs: int = 3,
     output_dir: str = "./output/sft"
 ) -> str:
@@ -913,7 +909,7 @@ def train_with_sft(
 
 def train_with_grpo(
     model_name: str = "Qwen/Qwen2-0.5B-Instruct",
-    max_samples: Optional[int] = 100,
+    max_samples: int | None = 100,
     num_epochs: int = 3,
     output_dir: str = "./output/grpo"
 ) -> str:

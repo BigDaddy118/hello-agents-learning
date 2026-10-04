@@ -39,8 +39,27 @@ rl = [
     "wandb>=0.15.0",
     "tensorboard>=2.13.0",
 ]
-all = ["hello-agents[search,memory,web,protocols,rl]"]
+# 第十二章评估（bfcl-eval / numpy 1.26 需另装，见 README）
+evaluation = [
+    "datasets>=2.14.0",
+    "huggingface_hub>=0.20.0",
+    "evaluate>=0.4.0,<1.0.0",
+    "pandas>=2.0.0,<3.0.0",
+    "matplotlib>=3.7.0,<4.0.0",
+    "seaborn>=0.12.0,<1.0.0",
+    "tqdm>=4.65.0,<5.0.0",
+    "gradio>=4.0.0,<5.0.0",
+]
+all = ["hello-agents[search,memory,web,protocols,rl,evaluation]"]
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["hello_agents*"]
+
+[tool.ruff.lint.per-file-ignores]
+"hello_agents/evaluation/**/*.py" = ["BLE001", "PLW1510"]
+"hello_agents/tools/builtin/bfcl_evaluation_tool.py" = ["BLE001"]
+"hello_agents/tools/builtin/gaia_evaluation_tool.py" = ["BLE001"]
+"hello_agents/tools/builtin/llm_judge_tool.py" = ["BLE001"]
+"hello_agents/tools/builtin/win_rate_tool.py" = ["BLE001"]
+"code/chapter12/data_generation/**/*.py" = ["BLE001", "E402"]

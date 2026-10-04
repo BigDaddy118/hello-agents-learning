@@ -3,10 +3,14 @@
 from .async_executor import AsyncToolExecutor, run_parallel_tools_sync
 from .base import Tool, ToolParameter
 from .builtin import (
+    BFCLEvaluationTool,
     CalculatorTool,
+    GAIAEvaluationTool,
+    LLMJudgeTool,
     MemoryTool,
     RAGTool,
     SearchTool,
+    WinRateTool,
     calculate,
     search,
 )
@@ -19,7 +23,10 @@ from .registry import ToolRegistry, global_registry
 
 __all__ = [
     "AsyncToolExecutor",
+    "BFCLEvaluationTool",
     "CalculatorTool",
+    "GAIAEvaluationTool",
+    "LLMJudgeTool",
     "MCPTool",
     "MemoryTool",
     "NoteTool",
@@ -32,6 +39,7 @@ __all__ = [
     "ToolChainManager",
     "ToolParameter",
     "ToolRegistry",
+    "WinRateTool",
     "calculate",
     "global_registry",
     "run_parallel_tools_sync",
