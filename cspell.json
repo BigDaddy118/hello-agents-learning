@@ -58,6 +58,9 @@
     "dotenv",
     "elts",
     "fanout",
+    "healthz",
+    "lmstudio",
+    "loguru",
     "venv"
   ],
   "ignorePaths": [

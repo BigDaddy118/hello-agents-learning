@@ -1,0 +1,30 @@
+# Secrets — never commit
+.env
+**/.env
+.env.local
+**/.env.local
+!.env.example
+!**/.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.uv/
+notes/
+workspace/
+cache/
+
+# Node
+node_modules/
+dist/
+.DS_Store
+
+# OS / editor
+.idea/
+.vscode/
+*.log

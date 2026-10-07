@@ -24,6 +24,8 @@
 | `code/chapter10/` | 第十章 MCP 自检 + 自定义天气服务器（`14_weather_*`） |
 | `code/chapter11/` | 第十一章 SFT/GRPO 训练与评估流水线 |
 | `code/chapter12/` | 第十二章 BFCL / GAIA / 数据生成质量评估 |
+| `code/chapter13/helloagents-trip-planner/` | 第十三章智能旅行助手 |
+| `code/chapter14/helloagents-deepresearch/` | 第十四章自动化深度研究智能体 |
 | `my_app/` | 给 `CodebaseMaintainer` 用的迷你示例代码库 |
 
 ### `hello_agents` 结构

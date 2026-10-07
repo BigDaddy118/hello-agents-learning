@@ -6,6 +6,7 @@ from .agents import (
     ReActAgent,
     ReflectionAgent,
     SimpleAgent,
+    ToolAwareSimpleAgent,
 )
 from .context import ContextBuilder, ContextConfig, ContextPacket
 from .core.agent import Agent
@@ -56,6 +57,7 @@ __all__ = [
     "SimpleAgent",
     "TerminalTool",
     "Tool",
+    "ToolAwareSimpleAgent",
     "ToolChain",
     "ToolChainManager",
     "ToolRegistry",

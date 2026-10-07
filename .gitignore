@@ -28,3 +28,6 @@ code/chapter12/data_generation/generated_data/generation_report_*.md
 # nested repos under chapter demos
 code/chapter10/weather-mcp-server/.git/
 **/.git.bak/
+
+code/chapter13/helloagents-trip-planner/.git/
+code/chapter14/helloagents-deepresearch/.git/

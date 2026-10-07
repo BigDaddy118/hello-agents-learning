@@ -1,0 +1,10 @@
+{
+  "include": ["src"],
+  "exclude": [".venv", "**/__pycache__", "**/*.egg-info"],
+  "venvPath": ".",
+  "venv": ".venv",
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "basic",
+  "extraPaths": ["src"],
+  "reportPrivateImportUsage": "none"
+}

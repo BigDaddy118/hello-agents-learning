@@ -63,3 +63,15 @@ include = ["hello_agents*"]
 "hello_agents/tools/builtin/llm_judge_tool.py" = ["BLE001"]
 "hello_agents/tools/builtin/win_rate_tool.py" = ["BLE001"]
 "code/chapter12/data_generation/**/*.py" = ["BLE001", "E402"]
+
+[tool.ruff.lint.isort]
+# chapter14 backend local modules; avoid clashing with PyPI package named "models"
+known-first-party = [
+    "hello_agents",
+    "agent",
+    "config",
+    "models",
+    "prompts",
+    "services",
+    "utils",
+]

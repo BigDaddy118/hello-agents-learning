@@ -6,6 +6,7 @@
     "code/chapter8",
     "code/chapter9",
     "code/chapter10",
+    "code/chapter14/helloagents-deepresearch/backend/src",
     "_check_env.py"
   ],
   "exclude": [
@@ -24,6 +25,10 @@
   "venv": ".venv",
   "pythonVersion": "3.12",
   "typeCheckingMode": "basic",
-  "extraPaths": [".", "code/chapter12/data_generation"],
+  "extraPaths": [
+    ".",
+    "code/chapter12/data_generation",
+    "code/chapter14/helloagents-deepresearch/backend/src"
+  ],
   "reportPrivateImportUsage": "none"
 }
